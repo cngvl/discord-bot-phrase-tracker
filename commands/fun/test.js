@@ -6,11 +6,6 @@ module.exports = {
     .setDescription("Message collector test function")
     .addStringOption((option) =>
       option.setName("input").setDescription("The input to echo back")
-    )
-    .addBooleanOption((option) =>
-      option
-        .setName("ephemeral")
-        .setDescription("Whether or not the echo should be ephemeral")
     ),
   async execute(interaction) {
     console.log("interaction.options.getRequired");
