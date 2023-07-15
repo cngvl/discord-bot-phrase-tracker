@@ -8,21 +8,32 @@ module.exports = {
       option.setName("input").setDescription("The input to echo back")
     ),
   async execute(interaction) {
-    console.log("interaction.options.getRequired");
-    const userInput = interaction.options.getString("input");
+    await interaction.reply("poo");
+    console.log(interaction);
     // `m` is a message object that will be passed through the filter function
-    const collectorFilter = (m) => m.content.includes("discord");
-    const collector = interaction.channel.createMessageCollector({
-      filter: collectorFilter,
-      time: 15000,
-    });
+    const collectorFilter = (m) => m.content;
+    // const collectorFilter = (m) => m.content.includes("discord");
+    // // const channel = interaction.channel;
 
-    collector.on("collect", (m) => {
-      console.log(`Collected ${m.content}`);
-    });
+    // const collector = interaction.channel.createMessageCollector({
+    //   time: 1000 * 10,
+    // });
 
-    collector.on("end", (collected) => {
-      console.log(`Collected ${collected.size} items`);
-    });
+    // collector.on("collect", (m) => {
+    //   console.log(`Collect`);
+    //   console.log(`Collected ${m.content}`);
+    // });
+
+    // collector.on("end", (collected) => {
+    //   console.log("end");
+    //   console.log(collected);
+    //   console.log(`Collected ${collected.size} items`);
+    // });
+    // const userInput = interaction.options.getString("input");
   },
 };
+
+// client.on(Events.InteractionCreate, (interaction) => {
+//   console.log("TESING");
+//   console.log(interaction);
+// });
