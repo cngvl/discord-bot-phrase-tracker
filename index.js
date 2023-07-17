@@ -1,21 +1,32 @@
 // Require the necessary discord.js classes
-const fs = require("node:fs");
-const path = require("node:path");
+const fs = require("node:fs"); // Node's native file system module. Used to read commands directory and identify command files
+const path = require("node:path"); // Node's native path utility module. Helps constructs paths to access files and directories
+
 const { Client, Events, GatewayIntentBits, Collection } = require("discord.js");
+// GateIntentBits.guilds iintent option is necessary for the discord.js client to work - what does it enable in particular?
+// TODO: Look into Gateway Intents document page
+// Collection sxtends JS's native Map class. Used to store and retrieve commands
+
 const { token } = require("./config.json");
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
+// This block is placed in /events/ready.js
+// client.once(Events.ClientReady, c => {
+// 	console.log(`Ready! Logged in as ${c.user.tag}`);
+// });
+
 client.commands = new Collection();
 
 const foldersPath = path.join(__dirname, "commands");
-const commandFolders = fs.readdirSync(foldersPath);
+const commandFolders = fs.readdirSync(foldersPath); // Constructing path to commands folder, looking at the groups of commands ( fun, utility, etc. )
 
+// Retrieving all command files
 for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs
-    .readdirSync(commandsPath)
+    .readdirSync(commandsPath) // Constructing path to commands folder
     .filter((file) => file.endsWith(".js"));
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
@@ -31,6 +42,7 @@ for (const folder of commandFolders) {
   }
 }
 
+// Retrieving all command files
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs
   .readdirSync(eventsPath)
@@ -45,6 +57,11 @@ for (const file of eventFiles) {
     client.on(event.name, (...args) => event.execute(...args));
   }
 }
+
+// Testing section
+// client.on(Events.InteractionCreate, (interaction) => {
+//   console.log(interaction);
+// });
 
 // Log in to Discord with your client's token
 client.login(token);
