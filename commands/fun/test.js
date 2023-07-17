@@ -8,28 +8,16 @@ module.exports = {
       option.setName("input").setDescription("The input to echo back")
     ),
   async execute(interaction) {
-    await interaction.reply("poo");
-    console.log(interaction);
-    // `m` is a message object that will be passed through the filter function
-    const collectorFilter = (m) => m.content;
-    // const collectorFilter = (m) => m.content.includes("discord");
-    // // const channel = interaction.channel;
+    // const msg_filter = (m) => m.author.id === message.author.id;
+    // const collected = await message.channel.awaitMessages({ filter: msg_filter, max: 1 });
 
-    // const collector = interaction.channel.createMessageCollector({
-    //   time: 1000 * 10,
-    // });
-
-    // collector.on("collect", (m) => {
-    //   console.log(`Collect`);
-    //   console.log(`Collected ${m.content}`);
-    // });
-
-    // collector.on("end", (collected) => {
-    //   console.log("end");
-    //   console.log(collected);
-    //   console.log(`Collected ${collected.size} items`);
-    // });
-    // const userInput = interaction.options.getString("input");
+    // Or without async/await
+    const msg_filter = (m) => m.content.includes("discord");
+    message.channel
+      .awaitMessages({ filter: msg_filter, max: 1 })
+      .then((collected) => {
+        console.log(collected);
+      });
   },
 };
 
