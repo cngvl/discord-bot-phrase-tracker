@@ -1,32 +1,41 @@
-const { SlashCommandBuilder, DiscordJS } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
-  callback: (message) => {
-    const questions = ["item1", "item2", "item3"];
-
-    let counter = 0;
-
-    const filter = (m) => m.author.id === message.author.id;
-
-    const collector = new DiscordJS.MessageCollector(message.channel, filter, {
-      max: questions.length,
-      time: 1000 * 15,
+  data: new SlashCommandBuilder()
+    .setName("test")
+    .setDescription("Testing feature to figure out messageCollector works"),
+  async execute(interaction) {
+    await interaction.reply({
+      embeds: [
+        {
+          title: "Check console",
+        },
+      ],
     });
 
-    message.channel.send(questions[counter++]);
+    const collector = interaction.channel.createMessageCollector({
+      time: 1000 * 5,
+    });
+
+    // Sends a message in the chat
+    interaction.channel.send("poo");
+
     collector.on("collect", (m) => {
-      if (counter < questions.length) {
-        m.channel.send(questions[counter++]);
-      }
+      console.log("collector.on - collect");
+      console.log(m);
+      // if (counter < questions.length) {
+      //   m.channel.send(questions[counter++]);
+      // }
     });
 
     collector.on("end", (collected) => {
+      console.log("collector.on - end");
       console.log(`Collected ${collected.size} messages`);
 
-      let counter = 0;
-      collected.forEach((value) => {
-        console.log(questions[counter++], value.content);
-      });
+      // let counter = 0;
+      // collected.forEach((value) => {
+      //   console.log(questions[counter++], value.content);
+      // });
     });
   },
 };
