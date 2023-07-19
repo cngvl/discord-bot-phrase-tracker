@@ -10,7 +10,13 @@ const { Client, Events, GatewayIntentBits, Collection } = require("discord.js");
 const { token } = require("./config.json");
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
 
 // This block is placed in /events/ready.js
 // client.once(Events.ClientReady, c => {
@@ -59,9 +65,22 @@ for (const file of eventFiles) {
 }
 
 // Testing section
-// client.on(Events.InteractionCreate, (interaction) => {
-//   console.log(interaction);
-// });
+// if (command === "test") {
+//   let filter = (m) => m.content.toLowerCase() === "poo";
+//   const collector = message.channel.createMessageCollector(filter, {
+//     max: 10,
+//     time: 10000,
+//   });
+
+//   collector.on("collect", (m) => {
+//     // console.log(m.content);
+//     console.log("collect");
+//   });
+
+//   collector.on("end", (m) => {
+//     console.log("end");
+//   });
+// }
 
 // Log in to Discord with your client's token
 client.login(token);
