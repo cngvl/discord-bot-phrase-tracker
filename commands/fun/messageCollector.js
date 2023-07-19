@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("messageCollector template")
+    .setName("messagecollector_template")
     .setDescription("template to use #messageCollector"),
   async execute(interaction) {
     await interaction.reply({
@@ -26,6 +26,13 @@ module.exports = {
 
     collector.on("end", (collected) => {
       console.log(`Collected ${collected.size} messages`);
+      interaction.channel.send({
+        embeds: [
+          {
+            title: "End of collecting messages",
+          },
+        ],
+      });
     });
   },
 };
