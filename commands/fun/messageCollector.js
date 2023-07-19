@@ -13,7 +13,9 @@ module.exports = {
       ],
     });
 
+    // const collectorFilter = (m) => m.content.includes("string");
     const collector = interaction.channel.createMessageCollector({
+      //   filter: collectorFilter,
       time: 1000 * 5,
     });
 
