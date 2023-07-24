@@ -5,23 +5,15 @@ module.exports = {
     .setName("test")
     .setDescription("Testing feature to figure out how #fetch works"),
   async execute(interaction) {
-    await interaction.reply({
-      embeds: [
-        {
-          title: "Running test command - check console",
-        },
-      ],
-    });
-
-    dayMS = 86400000;
-    const date = new Date();
+    // dayMS = 86400000;
+    // const date = new Date();
+    const date = Date.now();
     // const collectorFilter = (m) => m.content.includes("string");
 
     interaction.channel.messages
       .fetch({
-        limit: 3,
-        // cache: false,
-        on: date, // The date time you want it from. can also use on:
+        limit: 5,
+        // around: date, // The date time you want it from. can also use on, before or after:
         // filter: messages.content.length > 0,
       })
       .then((messages) => {
@@ -43,5 +35,13 @@ module.exports = {
         });
       })
       .catch(console.error);
+
+    await interaction.reply({
+      embeds: [
+        {
+          title: "Running test command - check console",
+        },
+      ],
+    });
   },
 };
