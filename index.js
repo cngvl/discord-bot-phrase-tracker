@@ -65,22 +65,6 @@ for (const file of eventFiles) {
 }
 
 // Testing section
-// if (command === "test") {
-//   let filter = (m) => m.content.toLowerCase() === "poo";
-//   const collector = message.channel.createMessageCollector(filter, {
-//     max: 10,
-//     time: 10000,
-//   });
-
-//   collector.on("collect", (m) => {
-//     // console.log(m.content);
-//     console.log("collect");
-//   });
-
-//   collector.on("end", (m) => {
-//     console.log("end");
-//   });
-// }
 
 // Log in to Discord with your client's token
 client.login(token);
