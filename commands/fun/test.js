@@ -1,5 +1,10 @@
 const { SlashCommandBuilder } = require("discord.js");
 
+// User should input the command, phrase, user and also a timeperiod of where they want to search
+// Time periods should be some sort of optional menu?
+// In the future I can branch out and make users / channel optional
+// Fetch apparently? has a limit of 100 so it might make the UI a bit not vibes ya know
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("test")
@@ -14,6 +19,7 @@ module.exports = {
       .fetch({
         limit: 5,
         // around: date, // The date time you want it from. can also use on, before or after:
+        // TODO: Need to figure out how to add some sort of filter for users
         // filter: messages.content.length > 0,
       })
       .then((messages) => {
