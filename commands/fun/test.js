@@ -8,7 +8,18 @@ const { SlashCommandBuilder } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("test")
-    .setDescription("Testing feature to figure out how #fetch works"),
+    .setDescription("Testing feature to figure out how #fetch works")
+    .addStringOption((option) =>
+      option
+        .setName("duration")
+        .setDescription("Adding options")
+        .setRequired(true)
+        .addChoices(
+          { name: "Option1", value: "Value1" },
+          { name: "Option2", value: "Value2" },
+          { name: "Option3", value: "Value3" }
+        )
+    ),
   async execute(interaction) {
     // dayMS = 86400000;
     // const date = new Date();
@@ -20,15 +31,18 @@ module.exports = {
         limit: 5,
         // around: date, // The date time you want it from. can also use on, before or after:
         // TODO: Need to figure out how to add some sort of filter for users
-        // filter: messages.content.length > 0,
       })
       .then((messages) => {
-        // console.log(messages);
+        filteredMessages = messages.filter((mess) => mess.content.length > 0);
+        console.log(`Number of filtered messages: ${filteredMessages.length}`);
         let counter = 1;
         console.log(`Received ${messages.size} messages`);
         console.log(`Date: ${new Date(date)}`);
+        // Duration value:
+        // console.log(interaction.options.getString("duration"));
         console.log(`\n`);
-        messages.forEach((message) => {
+        filteredMessages.forEach((message) => {
+          // console.log(message.content.length > 0);
           console.log(`Message #${counter}`);
           console.log(`Username: ${message.author.username}`);
           var utcSeconds = message.createdTimestamp;
