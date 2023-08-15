@@ -1,67 +1,84 @@
 const { SlashCommandBuilder } = require("discord.js");
-
-// User should input the command, phrase, user and also a timeperiod of where they want to search
-// Time periods should be some sort of optional menu?
-// In the future I can branch out and make users / channel optional
-// Fetch apparently? has a limit of 100 so it might make the UI a bit not vibes ya know
+const messageCollector = require("./messageCollector");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("test")
-    .setDescription("Testing feature to figure out how #fetch works")
+    .setDescription("Scrap tester file to test for particular methods")
     .addStringOption((option) =>
       option
-        .setName("duration")
-        .setDescription("Adding options")
-        .setRequired(true)
-        .addChoices(
-          { name: "Option1", value: "Value1" },
-          { name: "Option2", value: "Value2" },
-          { name: "Option3", value: "Value3" }
-        )
+        .setName("user")
+        .setDescription("Use @ to mention the user you'd like to select for")
     ),
   async execute(interaction) {
-    // dayMS = 86400000;
-    // const date = new Date();
-    const date = Date.now();
-    // const collectorFilter = (m) => m.content.includes("string");
-
-    interaction.channel.messages
-      .fetch({
-        limit: 5,
-        // around: date, // The date time you want it from. can also use on, before or after:
-        // TODO: Need to figure out how to add some sort of filter for users
-      })
-      .then((messages) => {
-        filteredMessages = messages.filter((mess) => mess.content.length > 0);
-        console.log(`Number of filtered messages: ${filteredMessages.length}`);
-        let counter = 1;
-        console.log(`Received ${messages.size} messages`);
-        console.log(`Date: ${new Date(date)}`);
-        // Duration value:
-        // console.log(interaction.options.getString("duration"));
-        console.log(`\n`);
-        filteredMessages.forEach((message) => {
-          // console.log(message.content.length > 0);
-          console.log(`Message #${counter}`);
-          console.log(`Username: ${message.author.username}`);
-          var utcSeconds = message.createdTimestamp;
-          var tryDate = new Date(utcSeconds);
-          console.log(`Date: ${tryDate}`);
-          // console.log(`ID: ${message.id}`);
-          console.log(`Content: ${message.content}`);
-          counter += 1;
-          console.log(`\n`);
-        });
-      })
-      .catch(console.error);
-
     await interaction.reply({
       embeds: [
         {
-          title: "Running test command - check console",
+          title: "Running test command - check console ( collecting messages )",
         },
       ],
     });
+
+    function conditionIsMet(message) {
+      return message.content.includes("stop");
+    }
+
+    console.log(interaction.options.getString("user"));
+
+    // if (!targetUser || !targetString || isNaN(targetDate)) {
+    //   return message.reply('Please provide a valid user, string, and date.');
+    // }
+
+    // const collectorFilter = (m) => m.content.includes("string");
+    const collector = interaction.channel.createMessageCollector({
+      //   filter: collectorFilter,
+      // time: 1000 * 5,
+    });
+
+    collector.on("collect", (m) => {
+      console.log(m.content);
+      if (conditionIsMet(m)) {
+        collector.stop();
+      }
+    });
+
+    collector.on("end", (collected) => {
+      console.log(`Collected ${collected.size} messages`);
+
+      interaction.channel.send({
+        embeds: [
+          {
+            title: "End of collecting messages",
+          },
+        ],
+      });
+    });
   },
 };
+
+// messageCollector.on('collect', (collectedMessage) => {
+//   // Check if the desired condition is met
+//   if (conditionIsMet(collectedMessage)) {
+//     messageCollector.emit('end', messageCollector.collected, 'conditionMet');
+//   }
+// });
+
+// messageCollector.on('end', (collected, reason) => {
+//   if (reason === 'conditionMet') {
+//     message.reply('Collection stopped because condition was met.');
+//   } else {
+//     if (collected.size === 0) {
+//       message.reply(`No messages found.`);
+//     } else {
+//       message.reply(`User ${targetUser.tag} sent ${collected.size} messages containing '${targetString}' on ${targetDate.toDateString()}.`);
+//     }
+//   }
+// });
+// }
+// });
+
+// function conditionIsMet(message) {
+// // Implement your own condition check logic here
+// // Return true if the condition is met, false otherwise
+// return message.content.includes('stop-collection');
+// }
