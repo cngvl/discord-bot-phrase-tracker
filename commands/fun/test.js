@@ -1,15 +1,38 @@
 const { SlashCommandBuilder } = require("discord.js");
-const messageCollector = require("./messageCollector");
+// const messageCollector = require("./messageCollector");
+const {
+  MessageMentions: { USERS_PATTERN },
+} = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("test")
-    .setDescription("Scrap tester file to test for particular methods")
+    .setDescription("Scrap tester file to test for surprise feature")
+    // Selecting for user
     .addStringOption((option) =>
       option
         .setName("user")
         .setDescription("Use @ to mention the user you'd like to select for")
+    )
+    // Selecting number of times
+    .addStringOption((option) =>
+      option
+        .setName("value")
+        .setDescription("Number of times phrase needs to be said")
+        .addChoices(
+          { name: "5", value: "5" },
+          { name: "10", value: "10" },
+          { name: "20", value: "20" },
+          { name: "Random", value: "randomValue" }
+        )
+    )
+    .addStringOption((option) =>
+      option
+        .setName("phrase")
+        .setRequired(true)
+        .setDescription("What phrase do you want to look for")
     ),
+  // Need to add another string option for phrase
   async execute(interaction) {
     await interaction.reply({
       embeds: [
@@ -19,15 +42,56 @@ module.exports = {
       ],
     });
 
-    function conditionIsMet(message) {
-      return message.content.includes("stop");
+    function stopCondition(message) {
+      return message.content.includes("stop!");
     }
 
-    console.log(interaction.options.getString("user"));
+    // Sorting out target user type shit
+    const userTarget = interaction.options.getString("user");
+
+    function getUserFromMention(mention) {
+      if (!mention) {
+        console.log("NO user has been targeted - NULL");
+        return false;
+      } else if (mention.startsWith("<@") && mention.endsWith(">")) {
+        mention = mention.slice(2, -1);
+
+        if (mention.startsWith("!")) {
+          mention = mention.slice(1);
+        }
+
+        console.log("User has mention SUCCESSFULLY");
+        return mention;
+      } else {
+        console.log("User has mention has FAILED");
+        return false;
+      }
+    }
+
+    getUserFromMention(userTarget);
+
+    // Sorting out value type shit
+    function targetIntValue(value) {
+      return 10;
+    }
+
+    function getRandomIntInclusive(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
+    }
+
+    randomIntValue = getRandomIntInclusive(1, 10);
+
+    console.log(`Random number: ${randomIntValue}`);
+
+    // can do some NaN shit with if value is NaN and then pull getRandomIntInclusive
 
     // if (!targetUser || !targetString || isNaN(targetDate)) {
     //   return message.reply('Please provide a valid user, string, and date.');
     // }
+
+    // Sorting out phrase type shit
 
     // const collectorFilter = (m) => m.content.includes("string");
     const collector = interaction.channel.createMessageCollector({
@@ -37,7 +101,7 @@ module.exports = {
 
     collector.on("collect", (m) => {
       console.log(m.content);
-      if (conditionIsMet(m)) {
+      if (stopCondition(m)) {
         collector.stop();
       }
     });
@@ -76,9 +140,3 @@ module.exports = {
 // });
 // }
 // });
-
-// function conditionIsMet(message) {
-// // Implement your own condition check logic here
-// // Return true if the condition is met, false otherwise
-// return message.content.includes('stop-collection');
-// }
