@@ -4,6 +4,13 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("scrap")
     .setDescription("Storing scrapped code that I might use at a later time"),
+  // .addSubcommand(
+  //   (subcommand) =>
+  //     subcommand.setName("user").setDescription("Info about a user")
+  //   // .addUserOption((option) =>
+  //   //   option.setName("target").setDescription("The user")
+  //   // )
+  // ),
   async execute(interaction) {
     await interaction.reply("poo");
 
