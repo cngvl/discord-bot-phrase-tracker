@@ -1,39 +1,43 @@
 const { SlashCommandBuilder } = require("discord.js");
 // const messageCollector = require("./messageCollector");
-const {
-  MessageMentions: { USERS_PATTERN },
-} = require("discord.js");
+// const {
+//   MessageMentions: { USERS_PATTERN },
+// } = require("discord.js");
+const chalk = require("chalk");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("test")
     .setDescription("Scrap tester file to test for surprise feature")
-    // Selecting for user
-    .addStringOption((option) =>
-      option
-        .setName("user")
-        .setDescription("Use @ to mention the user you'd like to select for")
-    )
-    // Selecting number of times
-    .addStringOption((option) =>
-      option
-        .setName("value")
-        .setDescription("Number of times phrase needs to be said")
-        .addChoices(
-          { name: "5", value: "5" },
-          { name: "10", value: "10" },
-          { name: "20", value: "20" },
-          { name: "Random", value: "randomValue" }
-        )
-    )
+    // Selecting for phrase
     .addStringOption((option) =>
       option
         .setName("phrase")
         .setRequired(true)
         .setDescription("What phrase do you want to look for")
+    )
+    // Selecting for user
+    .addStringOption((option) =>
+      option
+        .setName("user")
+        .setDescription("Use @ to mention the user you'd like to select for")
     ),
+  // Selecting number of times - REMOVE THIS
+  // .addStringOption((option) =>
+  //   option
+  //     .setName("value")
+  //     .setDescription("Number of times phrase needs to be said")
+  //     .addChoices(
+  //       { name: "5", value: "5" },
+  //       { name: "10", value: "10" },
+  //       { name: "20", value: "20" },
+  //       { name: "Random", value: "randomValue" }
+  //     )
+  // ),
   // Need to add another string option for phrase
   async execute(interaction) {
+    // console.log(interaction.user.id);
+
     await interaction.reply({
       embeds: [
         {
@@ -42,8 +46,15 @@ module.exports = {
       ],
     });
 
+    // console.log(message.user.id);
+
+    // This needs to take in the ID of the person who called the command
     function stopCondition(message) {
-      return message.content.includes("stop!");
+      return (
+        message.content.includes("stop!") &&
+        message.author.id == interaction.user.id
+        // true
+      );
     }
 
     // Sorting out target user type shit
@@ -51,7 +62,7 @@ module.exports = {
 
     function getUserFromMention(mention) {
       if (!mention) {
-        console.log("NO user has been targeted - NULL");
+        console.log(chalk.red.bold("NO user has been targeted - NULL"));
         return false;
       } else if (mention.startsWith("<@") && mention.endsWith(">")) {
         mention = mention.slice(2, -1);
@@ -60,10 +71,10 @@ module.exports = {
           mention = mention.slice(1);
         }
 
-        console.log("User has mention SUCCESSFULLY");
+        console.log(chalk.green.bold("User has mention SUCCESSFULLY"));
         return mention;
       } else {
-        console.log("User has mention has FAILED");
+        console.log(chalk.red.bold("User has mention has FAILED"));
         return false;
       }
     }
@@ -100,7 +111,7 @@ module.exports = {
     });
 
     collector.on("collect", (m) => {
-      console.log(m.content);
+      console.log(m.author.id);
       if (stopCondition(m)) {
         collector.stop();
       }
@@ -119,13 +130,6 @@ module.exports = {
     });
   },
 };
-
-// messageCollector.on('collect', (collectedMessage) => {
-//   // Check if the desired condition is met
-//   if (conditionIsMet(collectedMessage)) {
-//     messageCollector.emit('end', messageCollector.collected, 'conditionMet');
-//   }
-// });
 
 // messageCollector.on('end', (collected, reason) => {
 //   if (reason === 'conditionMet') {
