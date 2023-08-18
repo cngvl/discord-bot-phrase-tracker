@@ -1,3 +1,7 @@
+// TODO: Need to figure out what to do as the surprise function
+// I could make a list of hard coded responses but maybe I can expand by implementing some database?
+// TODO: Account for case sensitivity
+
 const { SlashCommandBuilder } = require("discord.js");
 // const messageCollector = require("./messageCollector");
 // const {
@@ -22,69 +26,33 @@ module.exports = {
         .setName("user")
         .setDescription("Use @ to mention the user you'd like to select for")
     ),
-  // Selecting number of times - REMOVE THIS
-  // .addStringOption((option) =>
-  //   option
-  //     .setName("value")
-  //     .setDescription("Number of times phrase needs to be said")
-  //     .addChoices(
-  //       { name: "5", value: "5" },
-  //       { name: "10", value: "10" },
-  //       { name: "20", value: "20" },
-  //       { name: "Random", value: "randomValue" }
-  //     )
-  // ),
-  // Need to add another string option for phrase
   async execute(interaction) {
-    // console.log(interaction.user.id);
-
-    await interaction.reply({
-      embeds: [
-        {
-          title: "Running test command - check console ( collecting messages )",
-        },
-      ],
-    });
-
-    // console.log(message.user.id);
-
-    // This needs to take in the ID of the person who called the command
     function stopCondition(message) {
       return (
         message.content.includes("stop!") &&
         message.author.id == interaction.user.id
-        // true
       );
     }
-
     // Sorting out target user type shit
-    const userTarget = interaction.options.getString("user");
-
+    const mentionedTargetRaw = interaction.options.getString("user");
+    // Should make a 'That user doesn't exist' kinda thing to break when a username isn't declared properly
     function getUserFromMention(mention) {
       if (!mention) {
         console.log(chalk.red.bold("NO user has been targeted - NULL"));
-        return false;
+        return null;
       } else if (mention.startsWith("<@") && mention.endsWith(">")) {
         mention = mention.slice(2, -1);
-
         if (mention.startsWith("!")) {
           mention = mention.slice(1);
         }
-
-        console.log(chalk.green.bold("User has mention SUCCESSFULLY"));
+        // console.log(chalk.green.bold(`${mention}`));
         return mention;
       } else {
         console.log(chalk.red.bold("User has mention has FAILED"));
         return false;
       }
     }
-
-    getUserFromMention(userTarget);
-
-    // Sorting out value type shit
-    function targetIntValue(value) {
-      return 10;
-    }
+    const mentionedUserParsed = getUserFromMention(mentionedTargetRaw);
 
     function getRandomIntInclusive(min, max) {
       min = Math.ceil(min);
@@ -92,33 +60,60 @@ module.exports = {
       return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
     }
 
-    randomIntValue = getRandomIntInclusive(1, 10);
+    randomIntValue = getRandomIntInclusive(1, 2);
 
     console.log(`Random number: ${randomIntValue}`);
+    console.log(`Phrase: ${interaction.options.getString("phrase")}`);
 
-    // can do some NaN shit with if value is NaN and then pull getRandomIntInclusive
+    var NumberPhraseMentions = 0;
+    const mentionedPhrase = interaction.options.getString("phrase");
 
-    // if (!targetUser || !targetString || isNaN(targetDate)) {
-    //   return message.reply('Please provide a valid user, string, and date.');
-    // }
+    console.log(chalk.bgRedBright("End of execute"));
 
-    // Sorting out phrase type shit
-
-    // const collectorFilter = (m) => m.content.includes("string");
-    const collector = interaction.channel.createMessageCollector({
-      //   filter: collectorFilter,
-      // time: 1000 * 5,
+    await interaction.reply({
+      embeds: [
+        {
+          title: `${interaction.user.username} has set up a surprise!`,
+        },
+      ],
     });
 
+    // Sorting out phrase type shit
+    const collector = interaction.channel.createMessageCollector();
+
+    function checkTargetUserMentionPhrase(message, user, phrase) {
+      // console.log(`message.author.id: ${message.author.id}`);
+      // console.log(`user: ${user}`);
+      // console.log(`message.author.id == user: ${message.author.id == user}`);
+      // console.log(`message.content.include(phrase): ${message.content.includes(phrase)}`);
+      if (message.author.id == user && message.content.includes(phrase)) {
+        console.log(`Passes targetUserMentionPhrase`);
+        return true;
+      }
+    }
+
     collector.on("collect", (m) => {
-      console.log(m.author.id);
+      console.log(m.content);
       if (stopCondition(m)) {
         collector.stop();
+      } else if (
+        checkTargetUserMentionPhrase(m, mentionedUserParsed, mentionedPhrase)
+      ) {
+        NumberPhraseMentions += 1;
+        console.log(`Phrase mention count: ${NumberPhraseMentions}`);
+      }
+
+      if (NumberPhraseMentions == randomIntValue) {
+        console.log(`Trigger surprise`);
       }
     });
 
     collector.on("end", (collected) => {
-      console.log(`Collected ${collected.size} messages`);
+      console.log(
+        chalk.bgGreenBright(
+          `****** Collected ${collected.size} messages ******\n`
+        )
+      );
 
       interaction.channel.send({
         embeds: [
@@ -130,17 +125,3 @@ module.exports = {
     });
   },
 };
-
-// messageCollector.on('end', (collected, reason) => {
-//   if (reason === 'conditionMet') {
-//     message.reply('Collection stopped because condition was met.');
-//   } else {
-//     if (collected.size === 0) {
-//       message.reply(`No messages found.`);
-//     } else {
-//       message.reply(`User ${targetUser.tag} sent ${collected.size} messages containing '${targetString}' on ${targetDate.toDateString()}.`);
-//     }
-//   }
-// });
-// }
-// });
