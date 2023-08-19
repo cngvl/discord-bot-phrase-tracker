@@ -1,6 +1,7 @@
 // TODO: Need to figure out what to do as the surprise function
 // I could make a list of hard coded responses but maybe I can expand by implementing some database?
 // TODO: Account for case sensitivity
+// TODO: Need to figure out what to do after event is triggered
 
 const { SlashCommandBuilder } = require("discord.js");
 // const messageCollector = require("./messageCollector");
