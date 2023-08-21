@@ -37,23 +37,27 @@ module.exports = {
     // Sorting out target user type shit
     const mentionedTargetRaw = interaction.options.getString("user");
     // Should make a 'That user doesn't exist' kinda thing to break when a username isn't declared properly
+    // Potential for this to break when the user would manually input "<@ x>" - This sounds a bit silly but need to consider for safety?
     function getUserFromMention(mention) {
-      if (!mention) {
-        console.log(chalk.red.bold("NO user has been targeted - NULL"));
-        return null;
-      } else if (mention.startsWith("<@") && mention.endsWith(">")) {
+      if (mention.startsWith("<@") && mention.endsWith(">")) {
         mention = mention.slice(2, -1);
         if (mention.startsWith("!")) {
           mention = mention.slice(1);
         }
-        // console.log(chalk.green.bold(`${mention}`));
         return mention;
       } else {
         console.log(chalk.red.bold("User has mention has FAILED"));
         return false;
       }
     }
-    const mentionedUserParsed = getUserFromMention(mentionedTargetRaw);
+
+    var mentionedUserParsed = null;
+
+    if (mentionedTargetRaw == null) {
+      console.log(chalk.red.bold("NO user has been targeted - NULL"));
+    } else {
+      mentionedUserParsed = getUserFromMention(mentionedTargetRaw);
+    }
 
     function getRandomIntInclusive(min, max) {
       min = Math.ceil(min);
@@ -61,12 +65,12 @@ module.exports = {
       return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
     }
 
-    randomIntValue = getRandomIntInclusive(1, 2);
+    const randomIntValue = getRandomIntInclusive(1, 2);
 
     console.log(`Random number: ${randomIntValue}`);
     console.log(`Phrase: ${interaction.options.getString("phrase")}`);
 
-    var NumberPhraseMentions = 0;
+    var numberPhraseMentions = 0;
     const mentionedPhrase = interaction.options.getString("phrase");
 
     console.log(chalk.bgRedBright("End of execute"));
@@ -80,7 +84,6 @@ module.exports = {
     });
 
     // Sorting out phrase type shit
-    const collector = interaction.channel.createMessageCollector();
 
     function checkTargetUserMentionPhrase(message, user, phrase) {
       // console.log(`message.author.id: ${message.author.id}`);
@@ -93,19 +96,30 @@ module.exports = {
       }
     }
 
+    const collector = interaction.channel.createMessageCollector();
+
     collector.on("collect", (m) => {
+      if (numberPhraseMentions == randomIntValue) {
+        console.log(`Trigger surprise event`);
+      }
+
       console.log(m.content);
+
       if (stopCondition(m)) {
         collector.stop();
       } else if (
         checkTargetUserMentionPhrase(m, mentionedUserParsed, mentionedPhrase)
       ) {
-        NumberPhraseMentions += 1;
-        console.log(`Phrase mention count: ${NumberPhraseMentions}`);
-      }
-
-      if (NumberPhraseMentions == randomIntValue) {
-        console.log(`Trigger surprise`);
+        numberPhraseMentions += 1;
+        console.log(chalk.bgGreenBright(`MENTIONED USER`));
+        console.log(`Phrase mention count: ${numberPhraseMentions}`);
+      } else if (
+        mentionedUserParsed == null &&
+        m.content.includes(mentionedPhrase)
+      ) {
+        numberPhraseMentions += 1;
+        console.log(chalk.bgRedBright(`MENTION NULL`));
+        console.log(`Phrase mention count: ${numberPhraseMentions}`);
       }
     });
 
