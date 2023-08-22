@@ -25,7 +25,9 @@ module.exports = {
     ),
   async execute(interaction) {
     const mentionedTargetRaw = interaction.options.getString("user");
+    console.log(`Target user: ${interaction.user.username}`);
     const mentionedPhrase = interaction.options.getString("phrase");
+    console.log(`mentionedPhrase: ${mentionedPhrase}`);
     var mentionedUserParsed = null;
     var userMentioned = false;
     var numberPhraseMentions = 0;
@@ -42,6 +44,7 @@ module.exports = {
       return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
     }
     const randomIntValue = getRandomIntInclusive(3, 4);
+    // console.log(`Random number: ${randomIntValue}`);
 
     function getUserFromMention(mention) {
       // Potential for this to break when the user would manually input "<@ x>" - This sounds a bit silly but need to consider for safety?
@@ -53,8 +56,14 @@ module.exports = {
         userMentioned = true;
         return mention;
       } else {
-        interaction.channel.send("That user does not exist");
-        return false;
+        interaction.channel.send({
+          embeds: [
+            {
+              title: "That user doesn't exist ya gronk",
+            },
+          ],
+        });
+        throw new Erorr("That user does not exist - breaking out of code");
       }
     }
 
@@ -72,7 +81,7 @@ module.exports = {
       var uniqueUsers = [];
       interaction.channel.messages
         .fetch({
-          limit: 20,
+          limit: 50,
         })
         .then((messages) => {
           messages.forEach((message) => {
@@ -91,7 +100,6 @@ module.exports = {
     }
 
     function surpriseEventForTarget(interaction, target) {
-      console.log("Running surpriseEventForTarget method");
       interaction.channel.send(`<@${target}> eats ass`);
     }
 
@@ -100,9 +108,6 @@ module.exports = {
     } else {
       mentionedUserParsed = getUserFromMention(mentionedTargetRaw);
     }
-
-    // console.log(`Random number: ${randomIntValue}`);
-    // console.log(`Phrase: ${interaction.options.getString("phrase")}`);
 
     await interaction.reply({
       embeds: [
