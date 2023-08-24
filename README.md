@@ -24,7 +24,7 @@ To invite PhraseTrackerBot to your Discord server, use the following [invite lin
 
 ## Usage
 
-Once PhraseTrackerBot is added to your server, you can start using it right away. When the specified substring is mentioned a random number of times, the bot will send a surprise message. The bot will only listen to the channel it was called in.
+Once PhraseTrackerBot is added to your server, you can start using it right away. When the specified substring is mentioned a random number of times, the bot will send a surprise message. By default, anyone who writes a messaging including the substring can trigger the bot, unless the command was called with a specific user mentioned. The bot will only listen to the channel it was called in.
 
 To get started, mention the chosen substring in your conversations and wait for the surprise!
 
@@ -36,7 +36,7 @@ To get started, mention the chosen substring in your conversations and wait for 
 ![image](https://github.com/cngvl/discord-bot-phrase-tracker/assets/106298777/5fad3889-1044-4855-abf3-c4facaab0df3)
 
 - Optional:
-  - You can also choose to target a specific user by mentioning their username.
+  - You can also choose to target a specific user by mentioning their username. Note: if a user has been specified, ONLY the mentioned user can trigger the surprise event.
 ![image](https://github.com/cngvl/discord-bot-phrase-tracker/assets/106298777/fac897a4-b7e0-410b-8008-fe0618c00314)
 
  ## Support
