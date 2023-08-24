@@ -46,7 +46,7 @@ module.exports = {
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
     }
-    const randomIntValue = getRandomIntInclusive(3, 4);
+    const randomIntValue = getRandomIntInclusive(5, 10);
     // console.log(`Random number: ${randomIntValue}`);
 
     function getUserFromMention(mention) {
