@@ -1,11 +1,6 @@
 // I could make a list of hard coded responses but maybe I can expand by implementing some database?
-// For the event, I can just ping the target user OR if there is no target user I can just fetch the last few messages and ping whoever with some generic message.
 
 const { SlashCommandBuilder } = require("discord.js");
-// const messageCollector = require("./messageCollector");
-// const {
-//   MessageMentions: { USERS_PATTERN },
-// } = require("discord.js");
 const chalk = require("chalk");
 
 module.exports = {
@@ -28,7 +23,6 @@ module.exports = {
 
     console.log(`Author: ${interaction.user.username}`);
     console.log(`Target user: ${mentionedTargetRaw}`);
-    // console.log(interaction.options);
     const mentionedPhrase = interaction.options.getString("phrase");
     console.log(`mentionedPhrase: ${mentionedPhrase}`);
     var mentionedUserParsed = null;
@@ -123,6 +117,7 @@ module.exports = {
     const collector = interaction.channel.createMessageCollector();
 
     collector.on("collect", (m) => {
+      // console.log(m.content);
       if (numberPhraseMentions == randomIntValue && !userMentioned) {
         surpriseEventForNoTarget(interaction);
         collector.stop();
@@ -130,8 +125,6 @@ module.exports = {
         surpriseEventForTarget(interaction, mentionedUserParsed);
         collector.stop();
       }
-
-      // console.log(m.content);
 
       if (stopCondition(m)) {
         collector.stop();
